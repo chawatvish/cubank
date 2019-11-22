@@ -42,7 +42,7 @@
 }
 </style>
 
-<body>
+<body onload="loadCustInfo()">
 	<header class="header">
 		<nav class="navbar" style="background: #ef5285">
 			<div class="container-fluid">
@@ -143,11 +143,7 @@
 	<script src="../../lib/js/cookie-mgmt.js"></script>
 
 	<script type="text/javascript">
-			$(document).ready(function() {
-				getBillAmount();
-			});
-			
-			function getBillAmount() {
+			function loadCustInfo(){
 				var acctNum = readCookie("authentication");
 				if (acctNum) {
 					$.ajax({
@@ -163,12 +159,13 @@
 					}).done(function(result) {
 						if (result.isError) {
 							swal('ผิดพลาด', result.message, 'error');
+							$("#charge").text(commaSeparateNumber(result.accWaterCharge));
 							$("#btnSubmit").attr('disabled', true);
 						} else {
-						    //$("#charge").text(commaSeparateNumber(result.accWaterCharge));
-							//updateBillAmount(result.accWaterCharge);
-							updateBillAmount(result.data.billAmount);
-							//$("#amount").val(result.data.billAmount);
+
+							$("#charge").text(commaSeparateNumber(result.accWaterCharge));
+							$("#amount").val(result.accWaterCharge);
+
 						}
 					}).fail(function(xhr, status, error) {
 						swal('ผิดพลาด', error, 'error');
@@ -176,23 +173,7 @@
 					});
 				}
 			}
-			
-			function updateBillAmount(billAmount) {
-				if (billAmount < 0) {
-					$("#btnSubmit").attr('disabled', true);
-					swal('Error', 'Invalid service charge amount: ' + billAmount, 'error');
-				} else if(billAmount == 0) {
-					$("#btnSubmit").attr('disabled', true);
-					swal('No service charge', 'Service charge amount: ' + billAmount, 'info');
-				}  else {
-					$("#btnSubmit").attr('disabled', false);
-				} 
-				$("#charge").text(commaSeparateNumber(billAmount));
-				$("#amount").val(billAmount);
-			}
-
-
-
+		
 			function commaSeparateNumber(val) {
 				while (/(\d+)(\d{3})/.test(val.toString())) {
 					val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
@@ -210,21 +191,19 @@
 							data : {
 								service : "BillPayment",
 								transaction : {
-									bill_type : "0",
-									bill_amount: $("#amount").val()
+									bill_type : "0"
 								}
 							}
 						}).done(function(result) {
 							if (result.isError) {
-								swal('ผิดพลาด', result.message, 'error')
-								.then((result) => {
-									getBillAmount();
-								});
+								swal('ผิดพลาด', result.message, 'error');
+								$("#charge").text(commaSeparateNumber(result.accWaterCharge));
+								$("#btnSubmit").attr('disabled', true);
 							} else {
 								$("#btnSubmit").attr('disabled', true);
-								$("#charge").text(commaSeparateNumber(result.data.billAmount));
-								$("#amount").val(result.data.billAmount);
-								swal('ชำระค่าน้ำเรียบร้อย', 'ยอดเงินคงเหลือ ' + result.data.accountBalance + ' บาท', 'success');
+								$("#charge").text(commaSeparateNumber(result.accWaterCharge));
+								$("#amount").val(result.accWaterCharge);
+								swal('ชำระค่าน้ำเรียบร้อย', 'ยอดเงินคงเหลือ ' + result.accBalance + ' บาท', 'success');
 							}
 						}).fail(function(xhr, status, error) {
 							swal('ผิดพลาด', error, 'error');
