@@ -41,7 +41,7 @@ class BillPayment
 					$response["isError"] = true;
 				}
 			}
-			else if($billType == 1 ){
+			elseif($billType == 1 ){
 
 				$response["accElectricCharge"] = $result["accElectricCharge"] ;
 				$response["isError"] = false;
@@ -50,7 +50,7 @@ class BillPayment
 					$response["isError"] = true;
 				}
 			}
-			else if($billType == 2 ){
+			elseif($billType == 2 ){
 
 				$response["accPhoneCharge"] = $result["accPhoneCharge"] ;
 				$response["isError"] = false;
@@ -84,10 +84,10 @@ class BillPayment
 	if($billType == 0 ){ 	
 		$charge = $result["accWaterCharge"] ;
 	}
-	else if($billType == 1 ){	
+	elseif($billType == 1 ){	
 		$charge = $result["accElectricCharge"] ;
 	}
-	else if($billType == 2 ){	
+	elseif($billType == 2 ){	
 		$charge = $result["accPhoneCharge"] ;	
 	}
 			
@@ -98,6 +98,8 @@ class BillPayment
 		DBConnection::updateBill($this->session, $newCharge,$billType);
 		
 		$response["accWaterCharge"] = $newCharge;
+		$response["accElectricCharge"] = $newCharge;
+		$response["accPhoneCharge"] = $newCharge;
 		$response["accBalance"] = $newBalance;
 		$response["message"] = "คุณไม่มียอดค้างชำระ";
 		$response["isError"] = false;
