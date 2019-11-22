@@ -66,52 +66,7 @@ class DBConnection {
         return $result->fetch_array(MYSQLI_ASSOC);
     }
 	
-	public static function getCharge(string $accNo, int $type): int{
-		$con = new mysqli('localhost', 'root', '', 'integration');
-		if($type == 0){
-			$stmt = "SELECT waterCharge as charge FROM account WHERE no =".$accNo;
-		}
-		elseif ($type==1) {
-            $stmt = "SELECT electricCharge as charge FROM account WHERE no =".$accNo;
-        }
-        elseif ($type==2) {
-            $stmt = "SELECT phoneCharge as charge FROM account WHERE no =".$accNo;
-        }
-        
-		$result = mysqli_query($con, $stmt); 
-		$row = mysqli_fetch_array($result);
 
-        if(!$result) {
-            throw new AccountInformationException("account number : {$accNo} not found.");
-        }
-
-        return $row['charge'];
-
-	}
-	
-	public static function getBalance(string $accNo, int $type): int{
-		$con = new mysqli('localhost', 'root', '', 'integration');
-		if($type == 0){
-			$stmt = "SELECT balance as bal FROM account WHERE no =".$accNo;
-		}
-		elseif ($type==1) {
-            $stmt = "SELECT balance as bal FROM account WHERE no =".$accNo;
-        }
-        elseif ($type==2) {
-            $stmt = "SELECT balance as bal FROM account WHERE no =".$accNo;
-        }
-		
-		$result = mysqli_query($con, $stmt); 
-		$row = mysqli_fetch_array($result);
-
-        if(!$result) {
-            throw new AccountInformationException("account number : {$accNo} not found.");
-        }
-
-        return $row['bal'];
-
-	}
-	
 	public static function updateBill(string $accNo, int $updatedBalance, int $type): bool{
 		
 		$con = new mysqli('localhost', 'root', '', 'integration');
@@ -134,20 +89,5 @@ class DBConnection {
         return $result;
 	
 	}
-	
-	public static function restore(): bool{
-		
-		$con = new mysqli('localhost', 'root', '', 'integration');
-
-		$stmt = "UPDATE account SET balance = 10000,waterCharge = 200 WHERE no = 0112233445";
-		
-
-        $result = $con->query($stmt);
-        $con->close();
-
-        return $result;
-		
-	}
-	
 	
 }
