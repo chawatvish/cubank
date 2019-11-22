@@ -95,7 +95,7 @@
                                 <p>ยอดเงินคงเหลือ :
                                     <span id="accBalance" class="pink">accBalance</span> บาท
                                 </p>
-                                <form id="depositForm" class="form-horizontal">
+                                <form id="depositForm" class="form-horizontal" onSubmit="JavaScript:onSubmitDepositForm()">
                                     <div class="form-group row">
                                         <label class="col-sm-2 form-control-label">จำนวนเงิน
                                         </label>
@@ -109,6 +109,7 @@
                                             <input type="submit" value="ยืนยัน" class="btn btn-primary">
                                         </div>
                                     </div>
+                                    <p id="msg" style="color:red"></p>
                                 </form>
                             </div>
                         </div>
@@ -149,7 +150,7 @@
                   error,
                   'error'
               );
-            });;
+            });
         }
       }
       function commaSeparateNumber(val) {
@@ -158,6 +159,74 @@
           }
           return val;
       }
+      
+      function onSubmitDepositForm(){
+        var acctNo = readCookie("authentication");
+        $amount = $("#amount").val();
+
+        swal({
+            title: 'ฝากเงิน',
+            html: 'ฝากเงินเข้าบัญชี <br/>' +
+                $("#accNo").text() +' ('+ $("#accName").text() +') '+'<br/>' +
+                ' เป็นจำนวนเงิน ' + commaSeparateNumber($amount) + ' บาท',
+            type: 'info',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: 'ยืนยัน',
+            showCancelButton: true,
+            reverseButtons: true
+        })
+        .then(
+            function () {
+                // alert(">>"+ acctNo)
+                $.ajax({
+                    method: "POST",
+                    url: "../src/controller.php",
+                    dataType: "json",
+                    data: {
+                        service:"Deposit",
+                        transaction: {
+                            accNo : acctNo,
+                            amount : $amount
+                        }
+                    },
+                    success: function(result) {
+                        // console.log(JSON.stringify(result))
+                        if (result.isError){ 
+                            swal(
+                                'เกิดข้อผิดพลาด!', 
+                                result.errorMessage, 
+                                'error'
+                            );                            
+                        } else { // no error
+                            swal(
+                                'ฝากเงินเรียบร้อย!', 
+                                'ยอดเงินคงเหลือ = ' + commaSeparateNumber(result.accountBalance) +' บาท',                                
+                                'success'
+                            );
+                            loadCustInfo();
+                            $("#amount").val("");
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        swal(
+                            'เกิดข้อผิดพลาด!',
+                            'ข้อผิดพลาด ' + textStatus + ' : ' + errorThrown, 
+                            'error'
+                        );
+                    }
+                });
+            }, 
+            function (dismiss) {
+                if (dismiss ===  'cancel') {
+                    swal(
+                        'ยกเลิก',
+                        'ท่านได้ยกเลิกการทำรายการ',
+                        'error'
+                    );
+                }
+            });
+            event.preventDefault();
+        }
     </script>
     <script src="../lib/js/cookie-mgmt.js"></script>
     <!-- Javascript files-->
