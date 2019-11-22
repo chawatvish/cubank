@@ -100,7 +100,7 @@
                                                     </div>
                                                     <div class="text">
                                                         <strong>
-                                                            <font class="pink">ค่าไฟฟ้า</font>
+                                                            <font class="pink">ค่าไฟฟ้าฟ้า</font>
                                                         </strong>
                                                     </div>
                                                 </div>
@@ -139,12 +139,8 @@
 	<script src="../../lib/js/front.js"></script>
 	<script src="../../lib/js/sweetalert2.js"></script>
 	<script src="../../lib/js/cookie-mgmt.js"></script>
-    <script type="text/javascript">
-			$(document).ready(function() {
-				getBillAmount();
-			});
-			
-			function getBillAmount() {
+		<script type="text/javascript">
+			function loadCustInfo(){
 				var acctNum = readCookie("authentication");
 				if (acctNum) {
 					$.ajax({
@@ -160,12 +156,13 @@
 					}).done(function(result) {
 						if (result.isError) {
 							swal('ผิดพลาด', result.message, 'error');
+							$("#charge").text(commaSeparateNumber(result.accElectricCharge));
 							$("#btnSubmit").attr('disabled', true);
 						} else {
-						    //$("#charge").text(commaSeparateNumber(result.accWaterCharge));
-							//updateBillAmount(result.accWaterCharge);
-							updateBillAmount(result.data.billAmount);
-							//$("#charge").text(5555555);
+
+							$("#charge").text(commaSeparateNumber(result.accElectricCharge));
+							$("#amount").val(result.accElectricCharge);
+
 						}
 					}).fail(function(xhr, status, error) {
 						swal('ผิดพลาด', error, 'error');
@@ -173,23 +170,7 @@
 					});
 				}
 			}
-			
-			function updateBillAmount(billAmount) {
-				if (billAmount < 0) {
-					$("#btnSubmit").attr('disabled', true);
-					swal('Error', 'Invalid service charge amount: ' + billAmount, 'error');
-				} else if(billAmount == 0) {
-					$("#btnSubmit").attr('disabled', true);
-					swal('No service charge', 'Service charge amount: ' + billAmount, 'info');
-				}  else {
-					$("#btnSubmit").attr('disabled', false);
-				} 
-				$("#charge").text(commaSeparateNumber(billAmount));
-				$("#amount").val(billAmount);
-			}
-
-
-
+		
 			function commaSeparateNumber(val) {
 				while (/(\d+)(\d{3})/.test(val.toString())) {
 					val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
@@ -198,7 +179,7 @@
 			}
 
 			$("#electricForm").submit(function(event) {
-				swal({title:'ชำระค่าไฟ', text:'ชำระค่าไฟเป็นเงิน ' + $("#charge").text() + ' บาท', type:'info', showCancelButton: true})
+				swal({title:'ชำระค่าไฟฟ้า', text:'ชำระค่าไฟฟ้าเป็นเงิน ' + $("#charge").text() + ' บาท', type:'info', showCancelButton: true})
 					.then(() => {
 						$.ajax({
 							method : "POST",
@@ -207,21 +188,19 @@
 							data : {
 								service : "BillPayment",
 								transaction : {
-									bill_type : "1",
-									bill_amount: $("#amount").val()
+									bill_type : "1"
 								}
 							}
 						}).done(function(result) {
 							if (result.isError) {
-								swal('ผิดพลาด', result.message, 'error')
-								.then((result) => {
-									getBillAmount();
-								});
+								swal('ผิดพลาด', result.message, 'error');
+								$("#charge").text(commaSeparateNumber(result.accElectricCharge));
+								$("#btnSubmit").attr('disabled', true);
 							} else {
 								$("#btnSubmit").attr('disabled', true);
-								$("#charge").text(commaSeparateNumber(result.data.billAmount));
-								$("#amount").val(result.data.billAmount);
-								swal('ชำระค่าไฟเรียบร้อย', 'ยอดเงินคงเหลือ ' + result.data.accountBalance + ' บาท', 'success');
+								$("#charge").text(commaSeparateNumber(result.accElectricCharge));
+								$("#amount").val(result.accElectricCharge);
+								swal('ชำระค่าไฟฟ้าเรียบร้อย', 'ยอดเงินคงเหลือ ' + result.accBalance + ' บาท', 'success');
 							}
 						}).fail(function(xhr, status, error) {
 							swal('ผิดพลาด', error, 'error');
