@@ -1,13 +1,10 @@
 <?php namespace Operation;
 
-require_once(__DIR__.'../../outputs/Outputs.php');
 require_once(__DIR__.'../../serviceauthentication/serviceauthentication.php');
 require_once(__DIR__.'../../serviceauthentication/DBConnection.php');
 require_once 'serviceAuthenticationStub.php'; // stub
 require_once 'dbConnectorStub.php'; // stub
 
-use Output\Outputs;
-use Exception;
 use AccountInformationException;
 use serviceauthentication;
 use DBConnection;
