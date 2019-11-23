@@ -1,47 +1,58 @@
 <?php
 
-include_once __DIR__ . "/../src/transfer/Transfer.php";
-include_once __DIR__ . "/../src/transfer/StubServiceAuthentication.php";
-include_once __DIR__ . "/../src/transfer/StubDeposit.php";
-include_once __DIR__ . "/../src/transfer/StubWithdrawal.php";
+require_once __DIR__ . "./../../src/transfer/transfer.php";
+require_once __DIR__ . "../../DBConnectionStub.php";
+require_once __DIR__ . "/ServiceAuthenticationTransferStub.php";
+require_once __DIR__ . "/StubDeposit.php";
+require_once __DIR__ . "/StubWithdrawal.php";
 
-use Operation\Transfer;
+use Stub\ServiceAuthenticationTransferStub;
 use PHPUnit\Framework\TestCase;
+use Operation\Transfer;
 use Stub\StubDeposit;
-use Stub\StubServiceAuthentication;
 use Stub\StubWithdrawal;
+use Operation\DBConnectionStub;
 
 class TransferTest extends TestCase
 {
+    private $stubDB, $serviceAuthen, $stubDeposit, $stubWithdrawal, $transferService;
+
+    protected function _before() {
+        $this->stubDB = new DBConnectionStub();
+        $this->serviceAuthen = new ServiceAuthenticationTransferStub();
+        $this->stubDeposit = new StubDeposit();
+        $this->stubWithdrawal = new StubWithdrawal($this->serviceAuthen, $this->stubDB);
+        $this->transferService = new Transfer($this->serviceAuthen, $this->stubDeposit, $this->stubWithdrawal);
+    } 
+
     public function testTC001()
-    {
-        $transfer = new Transfer('3333333001', 'TEST 001', new StubServiceAuthentication(), new StubDeposit(), new StubWithdrawal());
-        $result = $transfer->doTransfer('333333300g', '5000');
+    {   
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999999999','333333300g', '5000');
         $this->assertTrue($result['isError']);
         $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
     }
 
     public function testTC002()
     {
-        $transfer = new Transfer('3333333001', 'TEST 001', new StubServiceAuthentication(), new StubDeposit(), new StubWithdrawal());
-        $result = $transfer->doTransfer('123456789', '5000');
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999999999', '123456789', '5000');
         $this->assertTrue($result['isError']);
         $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
     }
 
     public function testTC003()
     {
-        $transfer = new Transfer('3333333001', 'TEST 001', new StubServiceAuthentication(), new StubDeposit(), new StubWithdrawal());
-        $result = $transfer->doTransfer('123456789', '5000');
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999999999', '123456789', '5000');
         $this->assertTrue($result['isError']);
         $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
     }
     
     public function testTC004()
     {
-        $transfer = new Transfer('3333333001', 'TEST 001', new StubServiceAuthentication(), new StubDeposit(), new StubWithdrawal());
-        $result = $transfer->doTransfer('3333333005', '
-        ');
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999999999','3333333005', '500000000');
         $this->assertTrue($result['isError']);
         $this->assertEquals("ยอดเงินไม่เพียงพอ", $result["message"]);
     }

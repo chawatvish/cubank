@@ -36,7 +36,7 @@ class Transfer
             $this->withdrawalService = $withdrawalService;
         }
     }
-    public function doTransfer(string $srcNumber, string $targetNumber, string $amount)
+    public function doTransfer(string $srcNumber, string $targetNumber, string $amount): array
     {
         $response = array("isError" => true);
         $srcBal = 0;
