@@ -8,7 +8,7 @@ require_once "./authentication/authentication.php";
 // require_once "withdraw/Withdrawal.php";
 require_once "deposit/DepositService.php";
 // require_once "transfer/transfer.php";
-// require_once "billpayment/billpayment.php";
+require_once "billpayment/billpayment.php";
 require_once "./serviceauthentication/serviceauthentication.php";
 
 use Operation\Authentication;

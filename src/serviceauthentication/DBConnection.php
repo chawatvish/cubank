@@ -4,14 +4,15 @@ include_once 'ServiceType.php';
 include_once 'AccountInformationException.php';
 include_once 'BillingException.php';
 
-class DBConnection {
-    public static function accountInformationProvider(): array {
+class DBConnection
+{
+    public static function accountInformationProvider(): array
+    {
         $argument = func_get_args();
 
         if (count($argument) == 1) {
             return DBConnection::serviceAuthentication($argument[0]);
-        }
-        elseif(count($argument) == 2) {
+        } elseif (count($argument) == 2) {
             return DBConnection::userAuthentication(
                 $argument[0],
                 $argument[1]
@@ -19,17 +20,19 @@ class DBConnection {
         }
     }
 
-    public static function saveTransaction(string $accNo, int $updatedBalance): bool {
+    public static function saveTransaction(string $accNo, int $updatedBalance): bool
+    {
         $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
-        $stmt = "UPDATE ACCOUNT SET balance = ". $updatedBalance. " WHERE no = ". $accNo;
+        $stmt = "UPDATE ACCOUNT SET balance = " . $updatedBalance . " WHERE no = " . $accNo;
         $result = $con->query($stmt);
         $con->close();
 
         return $result;
     }
 
-    private static function serviceAuthentication(string $accNo): array {
+    private static function serviceAuthentication(string $accNo): array
+    {
         $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
         $stmt = "SELECT no as accNo, "
@@ -39,7 +42,7 @@ class DBConnection {
             . "electricCharge as accElectricCharge, "
             . "phoneCharge as accPhoneCharge "
             . "FROM ACCOUNT "
-            . "WHERE no = ". $accNo;
+            . "WHERE no = " . $accNo;
         $result = $con->query($stmt);
         $con->close();
 
@@ -49,14 +52,15 @@ class DBConnection {
         return $result->fetch_array(MYSQLI_ASSOC);
     }
 
-    private static function userAuthentication(string $accNo, string $pin): array {
+    private static function userAuthentication(string $accNo, string $pin): array
+    {
         $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
         $stmt = "SELECT no as accNo, "
             . "name as accName, "
             . "balance as accBalance "
             . "FROM ACCOUNT "
-            . "WHERE no = ". $accNo. " AND pin = ". $pin;
+            . "WHERE no = " . $accNo . " AND pin = " . $pin;
         $result = $con->query($stmt);
         $con->close();
 
@@ -65,27 +69,23 @@ class DBConnection {
         }
         return $result->fetch_array(MYSQLI_ASSOC);
     }
-  
-	public static function updateBill(string $accNo, int $updatedBalance, int $type): bool{
-		
-		$con = new mysqli('localhost', 'root', '', 'integration');
 
-		if($type == 0){
-			$stmt = "UPDATE account SET waterCharge = ". $updatedBalance. " WHERE no = ". $accNo;
-		}
-		elseif ($type == 1) {
-            $stmt = "UPDATE account SET electricCharge = ". $updatedBalance. " WHERE no = ". $accNo;
-            
+    public static function updateBill(string $accNo, int $updatedBalance, int $type): bool
+    {
+
+        $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
+
+        if ($type == 0) {
+            $stmt = "UPDATE ACCOUNT SET waterCharge = " . $updatedBalance . " WHERE no = " . $accNo;
+        } elseif ($type == 1) {
+            $stmt = "UPDATE ACCOUNT SET electricCharge = " . $updatedBalance . " WHERE no = " . $accNo;
+        } elseif ($type == 2) {
+            $stmt = "UPDATE ACCOUNT SET phoneCharge = " . $updatedBalance . " WHERE no = " . $accNo;
         }
-        elseif ($type == 2) {
-            $stmt = "UPDATE account SET phoneCharge = ". $updatedBalance. " WHERE no = ". $accNo;
-            
-        }
-		
+
         $result = $con->query($stmt);
         $con->close();
 
         return $result;
-	
-	}
+    }
 }
