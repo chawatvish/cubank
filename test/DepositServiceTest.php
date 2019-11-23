@@ -14,11 +14,11 @@ final class DepositServiceTest extends TestCase
             $expected = $inputs[$x][0];
             $accNum = $inputs[$x][1];
             $amount = $inputs[$x][2];
-            $depositHandler = new DepositService($accNum);
+            $depositHandler = new DepositService();
             $depositHandler->setTestAuthStub(true);
             $depositHandler->setTestTxStub(true);
-            $output = $depositHandler->deposit($amount);
-            $this->assertEquals($expected, $output['errorMessage']);
+            $output = $depositHandler->deposit($accNum,$amount);
+            $this->assertEquals($expected, $output['message']);
         }
     }
 
