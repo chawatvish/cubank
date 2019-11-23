@@ -3,13 +3,14 @@
 define("PHP_ENV",false);
 ini_set("display_errors",PHP_ENV?"ON":"Off");
 
-require_once "../vendor/autoload.php";
-require_once "./authentication/authentication.php";
-// require_once "withdraw/Withdrawal.php";
-require_once "deposit/DepositService.php";
-// require_once "transfer/transfer.php";
-require_once "billpayment/billpayment.php";
-require_once "./serviceauthentication/serviceauthentication.php";
+//require_once "../vendor/autoload.php";
+require_once "authentication/authentication.php";
+require_once "withdraw/Withdrawal.php";
+//require_once "deposit/DepositService.php";
+//require_once "transfer/transfer.php";
+//require_once "billpayment/billpayment.php";
+require_once "serviceauthentication/serviceauthentication.php";
+require_once "serviceauthentication/DBConnection.php";
 
 use Operation\Authentication;
 use Operation\DepositService;
@@ -38,7 +39,7 @@ try{
       }
       elseif ($service == "Withdraw"){
         $transaction = $_POST["transaction"];
-        $withdrawal = new Withdrawal($session);
+        $withdrawal = new Withdrawal($session, $serviceAuthentication, $dbConnection);
         echo json_encode($withdrawal->withdraw($transaction["amount"]));
       }
       elseif ($service == "Transfer"){
