@@ -2,7 +2,7 @@
 
 use DBConnection;
 
-class DBConnectionStub extends DBConnection {
+class DBConnectionTransferStub extends DBConnection {
     public static function saveTransaction(string $accNo, int $updatedBalance): bool {
         return true;
     }
