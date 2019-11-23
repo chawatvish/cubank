@@ -88,7 +88,8 @@
                             </div>
                             <div class="card-body">
                                 <p>จากบัญชีหมายเลข :
-                                    <span class="pink"><span id="accNo">accNo</span> (<span id="accName">accName</span>)</span>
+                                    <span class="pink"><span id="accNo">accNo</span> (<span
+                                            id="accName">accName</span>)</span>
                                 </p>
                                 <p>ยอดเงินคงเหลือ :
                                     <span id="accBalance" class="pink">accBalance</span> บาท</p>
@@ -97,7 +98,8 @@
                                         <label class="col-sm-2 form-control-label">จำนวนเงิน
                                         </label>
                                         <div class="col-sm-6">
-                                            <input id="amount" type="number" min="1" class="form-control form-control-warning" required>
+                                            <input id="amount" type="number" min="1"
+                                                class="form-control form-control-warning" required>
                                             <small class="form-text"></small>
                                         </div>
                                     </div>
@@ -115,47 +117,8 @@
         </section>
     </div>
 
-    <script type="text/javascript">
-      function loadCustInfo(){
-        var acctNum = readCookie("authentication");
-        if(acctNum){
-          $.ajax({
-            method: "POST",
-            url: "../src/controller.php",
-            dataType: "json",
-            data: {
-              service:"ServiceAuthentication",
-            }
-          })
-            .done(function (result) {
-              if (result.isError){
-                swal(
-                    'ผิดพลาด',
-                    result.message,
-                    'error'
-                );
-              }
-              else{
-                $("#accNo").text(result.accNo.toString().replace(/(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/, '$1-$2-$3-$4'));
-                $("#accName").text(result.accName);
-                $("#accBalance").text(commaSeparateNumber(result.accBalance));
-              }
-            }).fail(function(xhr,status,error){
-              swal(
-                  'ผิดพลาด',
-                  error,
-                  'error'
-              );
-            });;
-        }
-      }
-      function commaSeparateNumber(val) {
-          while (/(\d+)(\d{3})/.test(val.toString())) {
-              val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
-          }
-          return val;
-      }
-    </script>
+
+
     <script src="../lib/js/cookie-mgmt.js"></script>
     <!-- Javascript files-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -165,6 +128,106 @@
     <script src="../lib/js/jquery.validate.min.js"></script>
     <script src="../lib/js/front.js"></script>
     <script src="../lib/js/sweetalert2.js"></script>
+    <script type="text/javascript">
+        function loadCustInfo() {
+            var acctNum = readCookie("authentication");
+            if (acctNum) {
+                $.ajax({
+                        method: "POST",
+                        url: "../src/controller.php",
+                        dataType: "json",
+                        data: {
+                            service: "ServiceAuthentication",
+                        }
+                    })
+                    .done(function (result) {
+                        if (result.isError) {
+                            swal(
+                                'ผิดพลาด',
+                                result.message,
+                                'error'
+                            );
+                        } else {
+                            $("#accNo").text(result.accNo.toString().replace(
+                                /(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/, '$1-$2-$3-$4'));
+                            $("#accName").text(result.accName);
+                            $("#accBalance").text(commaSeparateNumber(result.accBalance));
+                        }
+                    }).fail(function (xhr, status, error) {
+                        swal(
+                            'ผิดพลาด',
+                            error,
+                            'error'
+                        );
+                    });;
+            }
+        }
+
+        function commaSeparateNumber(val) {
+            while (/(\d+)(\d{3})/.test(val.toString())) {
+                val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+            }
+            return val;
+        }
+
+        $("#withdrawalForm").submit(function (event) {
+            var withdrawText = "ถอนเงินจากบัญชี <br>" +
+                $("#accNo").text() + " (" + $("#accName").text() + ")<br>" +
+                "เป็นจำนวนเงิน " + $("#amount").val() + " บาท"
+            swal({
+                title: 'ถอนเงิน',
+                html: withdrawText,
+                type: 'info',
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result) {
+                    callWithdrawService();
+                }
+            })
+            event.preventDefault();
+        });
+
+        function callWithdrawService() {
+            $.ajax({
+                method: "POST",
+                url: "../src/controller.php",
+                dataType: "json",
+                data: {
+                    service: "Withdraw",
+                    transaction: {
+                        amount: $("#amount").val()
+                    }
+                }
+            }).done(function (result) {
+                if (result.isError) {
+                    swal(
+                        'ผิดพลาด',
+                        result.message,
+                        'error'
+                    );
+                } else {
+                    swal(
+                        'ถอนเงินเรียบร้อย',
+                        'ยอดเงินคงเหลือ = ' + result.accBalance + ' บาท',
+                        'success'
+                    )
+                    $("#accBalance").text(commaSeparateNumber(result.accBalance));
+                    $("#amount").val("");
+                }
+            }).fail(function (xhr, status, error) {
+                swal(
+                    'ผิดพลาด',
+                    error,
+                    'error'
+                );
+            });
+        }
+    </script>
+
+
 </body>
 
 </html>
