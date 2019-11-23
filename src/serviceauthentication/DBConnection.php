@@ -20,9 +20,9 @@ class DBConnection {
     }
 
     public static function saveTransaction(string $accNo, int $updatedBalance): bool {
-        $con = new mysqli('localhost', 'root', '', 'integration');
+        $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
-        $stmt = "UPDATE account SET balance = ". $updatedBalance. " WHERE no = ". $accNo;
+        $stmt = "UPDATE ACCOUNT SET balance = ". $updatedBalance. " WHERE no = ". $accNo;
         $result = $con->query($stmt);
         $con->close();
 
@@ -30,7 +30,7 @@ class DBConnection {
     }
 
     private static function serviceAuthentication(string $accNo): array {
-        $con = new mysqli('localhost', 'root', '', 'integration');
+        $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
         $stmt = "SELECT no as accNo, "
             . "name as accName, "
@@ -38,7 +38,7 @@ class DBConnection {
             . "waterCharge as accWaterCharge, "
             . "electricCharge as accElectricCharge, "
             . "phoneCharge as accPhoneCharge "
-            . "FROM account "
+            . "FROM ACCOUNT "
             . "WHERE no = ". $accNo;
         $result = $con->query($stmt);
         $con->close();
@@ -50,12 +50,12 @@ class DBConnection {
     }
 
     private static function userAuthentication(string $accNo, string $pin): array {
-        $con = new mysqli('localhost', 'root', '', 'integration');
+        $con = new mysqli('localhost', 'root', 'newpassword', 'integration');
 
         $stmt = "SELECT no as accNo, "
             . "name as accName, "
             . "balance as accBalance "
-            . "FROM account "
+            . "FROM ACCOUNT "
             . "WHERE no = ". $accNo. " AND pin = ". $pin;
         $result = $con->query($stmt);
         $con->close();
@@ -65,8 +65,7 @@ class DBConnection {
         }
         return $result->fetch_array(MYSQLI_ASSOC);
     }
-	
-
+  
 	public static function updateBill(string $accNo, int $updatedBalance, int $type): bool{
 		
 		$con = new mysqli('localhost', 'root', '', 'integration');
@@ -89,5 +88,4 @@ class DBConnection {
         return $result;
 	
 	}
-	
 }
