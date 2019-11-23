@@ -5,7 +5,7 @@ require_once __DIR__ . "./../../src/transfer/transfer.php";
 use Operation\Transfer;
 use PHPUnit\Framework\TestCase;
 
-class TransferTest extends TestCase
+class TransferPRDTest extends TestCase
 {
     private $transferService;
 
