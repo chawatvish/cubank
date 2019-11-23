@@ -177,6 +177,78 @@
     <script src="../../lib/js/jquery.validate.min.js"></script>
     <script src="../../lib/js/front.js"></script>
     <script src="../../lib/js/sweetalert2.js"></script>
+    <script src="../../lib/js/cookie-mgmt.js"></script>
+    <script type="text/javascript">
+			function loadCustInfo(){
+				var acctNum = readCookie("authentication");
+				if (acctNum) {
+					$.ajax({
+						method : "POST",
+						url : "../../src/controller.php",
+						dataType : "json",
+						data : {
+							service : "BillPaymentInq",
+							transaction : {
+								bill_type : "2"
+							}
+						}
+					}).done(function(result) {
+						if (result.isError) {
+							swal('ผิดพลาด', result.message, 'error');
+							$("#charge").text(commaSeparateNumber(result.accPhoneCharge));
+							$("#btnSubmit").attr('disabled', true);
+						} else {
+
+							$("#charge").text(commaSeparateNumber(result.accPhoneCharge));
+							$("#amount").val(result.accPhoneCharge);
+
+						}
+					}).fail(function(xhr, status, error) {
+						swal('ผิดพลาด', error, 'error');
+						$("#btnSubmit").attr('disabled', true);
+					});
+				}
+			}
+		
+			function commaSeparateNumber(val) {
+				while (/(\d+)(\d{3})/.test(val.toString())) {
+					val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+				}
+				return val;
+			}
+
+			$("#phoneForm").submit(function(event) {
+				swal({title:'ชำระค่าโทรศัพท์', text:'ชำระค่าโทรศัพท์เป็นเงิน ' + $("#charge").text() + ' บาท', type:'info', showCancelButton: true})
+					.then(() => {
+						$.ajax({
+							method : "POST",
+							url : "../../src/controller.php",
+							dataType : "json",
+							data : {
+								service : "BillPayment",
+								transaction : {
+									bill_type : "2"
+								}
+							}
+						}).done(function(result) {
+							if (result.isError) {
+								swal('ผิดพลาด', result.message, 'error');
+								$("#charge").text(commaSeparateNumber(result.accPhoneCharge));
+								$("#btnSubmit").attr('disabled', true);
+							} else {
+								$("#btnSubmit").attr('disabled', true);
+								$("#charge").text(commaSeparateNumber(result.accPhoneCharge));
+								$("#amount").val(result.accPhoneCharge);
+								swal('ชำระค่าโทรศัพท์เรียบร้อย', 'ยอดเงินคงเหลือ ' + result.accBalance + ' บาท', 'success');
+							}
+						}).fail(function(xhr, status, error) {
+							swal('ผิดพลาด', error, 'error');
+						});
+					});
+				// To prevent event propagation
+				event.preventDefault();
+			});
+	</script>
 </body>
 
 </html>
