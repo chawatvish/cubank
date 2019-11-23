@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -90,17 +91,19 @@
                             </div>
                             <div class="card-body">
                                 <p>โอนเงินจากบัญชีหมายเลข :
-                                        <span class="pink"><span id="accNo">accNo</span> (<span id="accName">accName</span>)</span>
+                                    <span class="pink"><span id="accNo">accNo</span> (<span
+                                            id="accName">accName</span>)</span>
                                 </p>
                                 <p>ยอดเงินคงเหลือ:
-                                        <span id="accBalance" class="pink">accBalance</span> บาท</p>
+                                    <span id="accBalance" class="pink">accBalance</span> บาท</p>
                                 <p>ไปยัง</p>
                                 <form id="transferForm" class="form-horizontal">
                                     <div class="form-group row">
                                         <label class="col-sm-2 form-control-label">หมายเลขบัญชี
                                             <br>10 หลัก</label>
                                         <div class="col-sm-6">
-                                            <input id="accDesNo" type="text" minlength="10" maxlength="10" class="form-control form-control-warning" required>
+                                            <input id="accDesNo" type="text" minlength="10" maxlength="10"
+                                                class="form-control form-control-warning" required>
                                             <small class="form-text"></small>
                                         </div>
                                     </div>
@@ -108,7 +111,8 @@
                                         <label class="col-sm-2 form-control-label">จำนวนเงิน
                                         </label>
                                         <div class="col-sm-6">
-                                            <input id="amount" type="number" min="1" class="form-control form-control-warning" required>
+                                            <input id="amount" type="number" min="1"
+                                                class="form-control form-control-warning" required>
                                             <small class="form-text"></small>
                                         </div>
                                     </div>
@@ -129,47 +133,6 @@
         </section>
     </div>
 
-    <script type="text/javascript">
-      function loadCustInfo(){
-        var acctNum = readCookie("authentication");
-        if(acctNum){
-          $.ajax({
-            method: "POST",
-            url: "../src/controller.php",
-            dataType: "json",
-            data: {
-              service:"ServiceAuthentication",
-            }
-          })
-            .done(function (result) {
-              if (result.isError){
-                swal(
-                    'ผิดพลาด',
-                    result.message,
-                    'error'
-                );
-              }
-              else{
-                $("#accNo").text(result.accNo.toString().replace(/(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/, '$1-$2-$3-$4'));
-                $("#accName").text(result.accName);
-                $("#accBalance").text(commaSeparateNumber(result.accBalance));
-              }
-            }).fail(function(xhr,status,error){
-              swal(
-                  'ผิดพลาด',
-                  error,
-                  'error'
-              );
-            });;
-        }
-      }
-      function commaSeparateNumber(val) {
-          while (/(\d+)(\d{3})/.test(val.toString())) {
-              val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
-          }
-          return val;
-      }
-    </script>
     <script src="../lib/js/cookie-mgmt.js"></script>
     <!-- Javascript files-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -179,5 +142,102 @@
     <script src="../lib/js/jquery.validate.min.js"></script>
     <script src="../lib/js/front.js"></script>
     <script src="../lib/js/sweetalert2.js"></script>
+
+    <script type="text/javascript">
+        function loadCustInfo() {
+            var acctNum = readCookie("authentication");
+            if (acctNum) {
+                $.ajax({
+                    method: "POST",
+                    url: "../src/controller.php",
+                    dataType: "json",
+                    data: {
+                        service: "ServiceAuthentication",
+                    }
+                })
+                    .done(function (result) {
+                        if (result.isError) {
+                            swal(
+                                'ผิดพลาด',
+                                result.message,
+                                'error'
+                            );
+                        }
+                        else {
+                            $("#accNo").text(result.accNo.toString().replace(/(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/, '$1-$2-$3-$4'));
+                            $("#accName").text(result.accName);
+                            $("#accBalance").text(commaSeparateNumber(result.accBalance));
+                        }
+                    }).fail(function (xhr, status, error) {
+                        swal(
+                            'ผิดพลาด',
+                            error,
+                            'error'
+                        );
+                    });;
+            }
+        }
+        function commaSeparateNumber(val) {
+            while (/(\d+)(\d{3})/.test(val.toString())) {
+                val = val.toString().replace(/(\d+)(\d{3})/, '$1' + ',' + '$2');
+            }
+            return val;
+        }
+
+        $("#transferForm").submit(function (event) {
+            var alertText = "โอนเงินจากบัญชี " + $("#accNo").text() +
+                " " /*+ $("#accName").text() */ + " ไปยังบัญชี " +
+                $("#accDesNo").val().toString().replace(/(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/, '$1-$2-$3-$4') +
+                " เป็นจำนวนเงิน " + commaSeparateNumber($("#amount").val()) + " บาท"
+            swal({
+                title: 'โอนเงิน',
+                text: alertText,
+                type: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then(function () {
+                $.ajax({
+                    method: "POST",
+                    url: "../src/controller.php",
+                    dataType: "json",
+                    data: {
+                        service: "Transfer",
+                        transaction: {
+                            srcNumber: $("#accNo").text().replace(/-/g, ""),
+                            targetNumber: $("#accDesNo").val(),
+                            amount: $("#amount").val()
+                        }
+                    }
+                }).done(function (data) {
+                    console.log(data);
+                    if (data.isError) {
+                        swal(
+                            'ผิดพลาด',
+                            data.message,
+                            'error'
+                        );
+                    } else {
+                        swal(
+                            'โอนเงินเรียบร้อย',
+                            'ยอดเงินคงเหลือ = ' + commaSeparateNumber(data.accBalance) + " บาท",
+                            'success'
+                        );
+                        loadCustInfo();
+                        $("#accDesNo").val('');
+                        $("#amount").val('');
+                    }
+                }).fail(function (xhr, status, error) {
+                    swal(
+                        'ผิดพลาด1',
+                        error,
+                        'error'
+                    );
+                });
+            });
+            event.preventDefault();
+        });
+    </script>
 </body>
+
 </html>

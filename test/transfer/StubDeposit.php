@@ -1,13 +1,24 @@
 <?php namespace Stub;
 
-class StubDeposit
+require_once "../../src/deposit/DepositService.php";
+
+use Operation\DepositService;
+
+class StubDeposit extends DepositService
 {
-    public static function doDeposit(string $accNo, string $amount): array
+    private $accNo;
+
+    public function __construct(string $accNo)
     {
-        if ($accNo == '3333333001') {
-            return array("accNo" => $accNo, "accName" => "TestAccountName", "accBalance" => $amount + 20);
+        $this->accNo = $accNo;
+    }
+
+    public function doDeposit(string $amount): array
+    {
+        if ($this->accNo == '9999999999') {
+            return array("accNo" => $this->accNo, "accName" => "TestAccountName", "accBalance" => $amount + 20);
         } else {
-            return array("isError" => true, "message" => "Account number : " . $accNo . " not found.");
+            return array("isError" => true, "message" => "Account number : " . $this->accNo . " not found.");
         }
     }
 }

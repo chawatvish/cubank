@@ -1,36 +1,39 @@
 <?php namespace Operation;
 
 require_once __DIR__ . './../serviceauthentication/AccountInformationException.php';
-require_once __DIR__ . './../serviceauthentication/ServiceAuthentication.php';
+require_once __DIR__ . './../serviceauthentication/serviceauthentication.php';
+require_once __DIR__ . './../serviceauthentication/DBConnection.php';
+require_once __DIR__ . './../withdraw/Withdrawal.php';
+require_once __DIR__ . './../deposit/DepositService.php';
+
 use AccountInformationException;
 use Exception;
 use ServiceAuthentication;
-use Stub\StubDeposit;
-use Stub\StubWithdrawal;
+use DBConnection;
+use Operation\DepositService;
+use Operation\Withdrawal;
 
 class Transfer
 {
-    private $srcNumber, $srcName;
+    private $srcNumber;
     private $service, $depositService, $withdrawalService;
     public function __construct(string $srcNumber,
-        string $srcName,
         ServiceAuthentication $service = null,
-        StubDeposit $depositService = null,
-        StubWithdrawal $withdrawalService = null) {
+        DepositService $depositService = null,
+        Withdrawal $withdrawalService = null) {
         $this->srcNumber = $srcNumber;
-        $this->srcName = $srcName;
         if ($service == null) {
             $this->service = new ServiceAuthentication();
         } else {
             $this->service = $service;
         }
         if ($depositService == null) {
-            // $this->service = new Deub();
+            $this->depositService = new DepositService();
         } else {
             $this->depositService = $depositService;
         }
         if ($withdrawalService == null) {
-            // $this->withdrawalService = $withdrawalService;
+            $this->withdrawalService = new Withdrawal(new ServiceAuthentication(), new DBConnection());
         } else {
             $this->withdrawalService = $withdrawalService;
         }
@@ -44,22 +47,23 @@ class Transfer
             return $response;
         }
         try {
-            $this->service::accountAuthenticationProvider($targetNumber);
-
             $result = $this->service::accountAuthenticationProvider($this->srcNumber);
             $srcBal = $result["accBalance"];
             if ($srcBal < $amount) {
-                $response["isError"] = true;
-                throw new AccountInformationException("ยอดเงินไม่เพียงพอ");
+                $response["message"] = "ยอดเงินไม่เพียงพอ";
+                return $response;
             }
-            $withdrawalResult = $this->withdrawalService::doWithdrawal($this->srcNumber, $amount);
+            $withdrawalResult = $this->withdrawalService->withdraw($this->srcNumber, $amount);
             if ($withdrawalResult["isError"] == true) {
-                throw new Exception($withdrawalResult["message"]);
+                $response["message"] = $withdrawalResult["message"];
+                return $response;
             }
-            $depositResult = $this->depositService::doDeposit($targetNumber, $amount);
+            $depositResult = $this->depositService->deposit($targetNumber ,$amount);
             if ($depositResult["isError"] == true) {
-                throw new Exception($withdrawalResult["message"]);
+                $response["message"] = $depositResult["message"];
+                return $response;
             }
+
             $srcBalAfter = $srcBal - $amount;
             $response["accNo"] = $this->srcNumber;
             $response["accName"] = $this->srcName;

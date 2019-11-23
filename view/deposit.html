@@ -193,13 +193,13 @@
                         if (result.isError){ 
                             swal(
                                 'เกิดข้อผิดพลาด!', 
-                                result.errorMessage, 
+                                result.message, 
                                 'error'
                             );                            
                         } else { // no error
                             swal(
                                 'ฝากเงินเรียบร้อย!', 
-                                'ยอดเงินคงเหลือ = ' + commaSeparateNumber(result.accountBalance) +' บาท',                                
+                                'ยอดเงินคงเหลือ = ' + commaSeparateNumber(result.accBalance) +' บาท',                                
                                 'success'
                             );
                             loadCustInfo();

@@ -7,7 +7,7 @@ require_once "../vendor/autoload.php";
 require_once "authentication/authentication.php";
 require_once "withdraw/Withdrawal.php";
 require_once "deposit/DepositService.php";
-//require_once "transfer/transfer.php";
+require_once "transfer/transfer.php";
 require_once "billpayment/billpayment.php";
 require_once "serviceauthentication/serviceauthentication.php";
 require_once "serviceauthentication/DBConnection.php";
@@ -32,15 +32,15 @@ try {
     } elseif ($session) {
         if ($service == "Deposit") {
             $transaction = $_POST["transaction"];
-            $deposit = new DepositService($session);
-            echo json_encode($deposit->deposit($transaction["amount"]));
+            $deposit = new DepositService();
+            echo json_encode($deposit->deposit($transaction["accNo"], $transaction["amount"]));
         } elseif ($service == "Withdraw") {
             $transaction = $_POST["transaction"];
-            $withdrawal = new Withdrawal($session, $serviceAuthentication, $dbConnection);
-            echo json_encode($withdrawal->withdraw($transaction["amount"]));
+            $withdrawal = new Withdrawal($serviceAuthentication, $dbConnection);
+            echo json_encode($withdrawal->withdraw($session, $transaction["amount"]));
         } elseif ($service == "Transfer") {
             $transaction = $_POST["transaction"];
-            $transfer = new Transfer($transaction["srcNumber"], $transaction["srcName"]);
+            $transfer = new Transfer($transaction["srcNumber"]);
             echo json_encode($transfer->doTransfer($transaction["targetNumber"], $transaction["amount"]));
         } elseif ($service == "BillPayment") {
             $transaction = $_POST["transaction"];
