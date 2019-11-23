@@ -40,8 +40,8 @@ try {
             echo json_encode($withdrawal->withdraw($session, $transaction["amount"]));
         } elseif ($service == "Transfer") {
             $transaction = $_POST["transaction"];
-            $transfer = new Transfer($transaction["srcNumber"]);
-            echo json_encode($transfer->doTransfer($transaction["targetNumber"], $transaction["amount"]));
+            $transfer = new Transfer();
+            echo json_encode($transfer->doTransfer($transaction["srcNumber"], $transaction["targetNumber"], $transaction["amount"]));
         } elseif ($service == "BillPayment") {
             $transaction = $_POST["transaction"];
             $billPayment = new BillPayment($session);

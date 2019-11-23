@@ -15,13 +15,11 @@ use Operation\Withdrawal;
 
 class Transfer
 {
-    private $srcNumber;
     private $service, $depositService, $withdrawalService;
-    public function __construct(string $srcNumber,
+    public function __construct(
         ServiceAuthentication $service = null,
         DepositService $depositService = null,
         Withdrawal $withdrawalService = null) {
-        $this->srcNumber = $srcNumber;
         if ($service == null) {
             $this->service = new ServiceAuthentication();
         } else {
@@ -38,7 +36,7 @@ class Transfer
             $this->withdrawalService = $withdrawalService;
         }
     }
-    public function doTransfer(string $targetNumber, string $amount)
+    public function doTransfer(string $srcNumber, string $targetNumber, string $amount)
     {
         $response = array("isError" => true);
         $srcBal = 0;
@@ -47,13 +45,14 @@ class Transfer
             return $response;
         }
         try {
-            $result = $this->service::accountAuthenticationProvider($this->srcNumber);
+            $result = $this->service::accountAuthenticationProvider($srcNumber);
             $srcBal = $result["accBalance"];
             if ($srcBal < $amount) {
                 $response["message"] = "ยอดเงินไม่เพียงพอ";
                 return $response;
             }
-            $withdrawalResult = $this->withdrawalService->withdraw($this->srcNumber, $amount);
+
+            $withdrawalResult = $this->withdrawalService->withdraw($srcNumber, $amount);
             if ($withdrawalResult["isError"] == true) {
                 $response["message"] = $withdrawalResult["message"];
                 return $response;
