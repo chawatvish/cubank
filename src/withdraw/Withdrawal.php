@@ -25,13 +25,13 @@ class Withdrawal
 
             $response = array("isError" => true);
             if (!preg_match('/^[0-9]*$/', $accNo)) {
-                $response["message"] = "Account no. must be numeric!";
+                $response["message"] = "หมายเลขบัญชีจะต้องเป็นตัวเลขเท่านั้น";
             } elseif (strlen($accNo) != 10) {
-                $response["message"] = "Account no. must have 10 digit!";
+                $response["message"] = "หมายเลขบัญชีต้องเป็นตัวเลข 10 หลัก";
             } else {
                 $number = floatval($withDrawamount);
                 if (!is_numeric($withDrawamount)) {
-                    $response["message"] = "Amount must be numeric!";
+                    $response["message"] = "จำนวนเงินต้องเป็นตัวเลขเท่านั้น";
                 } elseif (!$this->checkWithdrawalNumberIsPositiveInteger($number)) {
                     $response["message"] = "จำนวนเงินที่ต้องการถอนต้องเป็นตัวเลขจำนวนเต็มที่มีค่ามากกว่า 0 เท่านั้น";
                 } else {
