@@ -1,8 +1,8 @@
 <?php namespace Operation;
 
 require_once __DIR__.'./../src/withdraw/Withdrawal.php';
+require_once __DIR__ . './../src/serviceauthentication/DBConnectionStub.php';
 require_once 'serviceauthenticationStub.php';
-require_once 'DBConnectionStub.php';
 
 use PHPUnit\Framework\TestCase;
 use Operation\ServiceAuthenticationStub;

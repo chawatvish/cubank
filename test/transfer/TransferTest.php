@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "./../../src/transfer/transfer.php";
-require_once __DIR__ . "./DBConnectionTransferStub.php";
+require_once __DIR__ . "/DBConnectionTransferStub.php";
 require_once __DIR__ . "/ServiceAuthenticationTransferStub.php";
 require_once __DIR__ . "/StubDeposit.php";
 require_once __DIR__ . "/StubWithdrawal.php";
