@@ -18,8 +18,8 @@ use Operation\ServiceAuthenticationStub;
 
 class BillPayment
 {
-	private $DBStub = false;
-	private $ServiceStub = false;
+	private $DBStub = true;
+	private $ServiceStub = true;
     private $session;
 
     public function __construct(string $session)
