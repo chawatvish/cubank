@@ -24,16 +24,16 @@ class MainDriver {
         echo "----On Processing---<br/><br/>";
 
         // create an object
-        $deposit = new DepositService($this->accNo);
+        $deposit = new DepositService();
         $deposit->setTestAuthStub(true);
         $deposit->setTestTxStub(true);
 
         echo "::: Output :::<br/>";
-        $result = json_encode($deposit->deposit($this->amount));        
+        $result = json_encode($deposit->deposit($this->accNo,$this->amount));        
         $result = json_decode($result, true);
 
         if($result['isError']) {
-            echo "Status : ".$result['errorMessage']."<br/>";  
+            echo "Status : ".$result['message']."<br/>";  
             echo "----Failed---";
         } else { // no error
             echo "Bank Account No. :".preg_replace('/(\d{1})\-?(\d{3})\-?(\d{3})\-?(\d{3})/', '$1-$2-$3-$4', $result['accountNumber'])."<br/>";
