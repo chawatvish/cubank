@@ -17,23 +17,24 @@ class BillPaymentTest extends TestCase {
     function test001_billpayment() {
 		//ดึงค่าบัญชีที่ไม่มียอดค้างชำระค่าน้ำ
 		$BillPayment = new BillPayment('0000000000');
-		$response = $BillPayment->getbill(0);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+		$response = $BillPayment->getbill(0);
+		
         $this->assertEquals("คุณไม่มียอดค้างชำระ",$response["message"]);
 		
 		//ดึงค่าบัญชีที่ไม่มียอดค้างชำระค่าไฟ
 		$BillPayment = new BillPayment('0000000000');
-        $response = $BillPayment->getBill(1);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->getBill(1);
         $this->assertEquals("คุณไม่มียอดค้างชำระ", $response["message"]);
 
 		//ดึงค่าบัญชีที่ไม่มียอดค้างชำระค่าโทรศัพท์
         $BillPayment = new BillPayment('0000000000');
-        $response = $BillPayment->getBill(2);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->getBill(2);
         $this->assertEquals("คุณไม่มียอดค้างชำระ", $response["message"]);
 	}
 
@@ -41,9 +42,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าน้ำ
         $BillPayment = new BillPayment('1111111111');
-        $response = $BillPayment->pay(0);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(0);
         $this->assertEquals("ยอดเงินในบัญชีไม่เพียงพอ", $response["message"]);
     }
 	//TC-003 ทดสอบกรณี ยอดเงินในบัญชี น้อยกว่าค่าไฟ
@@ -51,9 +52,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าไฟ
         $BillPayment = new BillPayment('1111111111');
-        $response = $BillPayment->pay(1);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(1);
         $this->assertEquals("ยอดเงินในบัญชีไม่เพียงพอ", $response["message"]);
     }
 
@@ -62,9 +63,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าโทรศัพท์
         $BillPayment = new BillPayment('1111111111');
-        $response = $BillPayment->pay(2);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(2);
         $this->assertEquals("ยอดเงินในบัญชีไม่เพียงพอ", $response["message"]);
     }
 	
@@ -73,9 +74,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าโทรศัพท์
         $BillPayment = new BillPayment('2222222222');
-        $response = $BillPayment->pay(0);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(0);
         $this->assertEquals("คุณไม่มียอดค้างชำระ", $response["message"]);
     }
 	
@@ -84,9 +85,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าโทรศัพท์
         $BillPayment = new BillPayment('3333333333');
-        $response = $BillPayment->pay(1);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(1);
         $this->assertEquals("คุณไม่มียอดค้างชำระ", $response["message"]);
     }
 
@@ -95,9 +96,9 @@ class BillPaymentTest extends TestCase {
 		  
 		//ดึงค่าบัญชีที่ยอดเงินในบัญชี น้อยกว่าค่าโทรศัพท์
         $BillPayment = new BillPayment('4444444444');
-        $response = $BillPayment->pay(2);
 		$BillPayment->setTestAuthStub(false);
         $BillPayment->setTestTxStub(false);
+        $response = $BillPayment->pay(2);
         $this->assertEquals("คุณไม่มียอดค้างชำระ", $response["message"]);
     }
 	
