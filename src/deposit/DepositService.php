@@ -2,14 +2,14 @@
 
 require_once __DIR__ . '../../serviceauthentication/serviceauthentication.php';
 require_once __DIR__ . '../../serviceauthentication/DBConnection.php';
-require_once 'serviceAuthenticationStub.php'; // stub
+require_once 'ServiceAuthenticationDepositStub.php'; // stub
 require_once 'dbConnectorStub.php'; // stub
 
 use AccountInformationException;
 use DBConnection;
 use dbConnectorStub;
 use serviceauthentication; // stub
-use serviceAuthenticationStub;
+use serviceAuthenticationDepositStub;
 
 class DepositService
 {
@@ -46,7 +46,7 @@ class DepositService
             try {
                 // Service Authentication
                 if ($this->isTestAuthStub) {
-                    $accountInfo = ServiceAuthenticationStub::accountAuthenticationProvider($accNo);
+                    $accountInfo = ServiceAuthenticationDepositStub::accountAuthenticationProvider($accNo);
                 } else {
                     $accountInfo = ServiceAuthentication::accountAuthenticationProvider($accNo);
                 }
