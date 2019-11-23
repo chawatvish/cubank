@@ -65,4 +65,27 @@ class DBConnection {
         }
         return $result->fetch_array(MYSQLI_ASSOC);
     }
+  
+	public static function updateBill(string $accNo, int $updatedBalance, int $type): bool{
+		
+		$con = new mysqli('localhost', 'root', '', 'integration');
+
+		if($type == 0){
+			$stmt = "UPDATE account SET waterCharge = ". $updatedBalance. " WHERE no = ". $accNo;
+		}
+		elseif ($type == 1) {
+            $stmt = "UPDATE account SET electricCharge = ". $updatedBalance. " WHERE no = ". $accNo;
+            
+        }
+        elseif ($type == 2) {
+            $stmt = "UPDATE account SET phoneCharge = ". $updatedBalance. " WHERE no = ". $accNo;
+            
+        }
+		
+        $result = $con->query($stmt);
+        $con->close();
+
+        return $result;
+	
+	}
 }
