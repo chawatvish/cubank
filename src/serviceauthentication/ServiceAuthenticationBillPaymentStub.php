@@ -1,7 +1,7 @@
 <?php 
 namespace Operation;
 use AccountInformationException;
-class ServiceAuthenticationStub {
+class ServiceAuthenticationBillPaymentStub {
     public static function accountAuthenticationProvider(string $accNo): array {
         //$response = 
         /* if($accNo !== "0000000000"){

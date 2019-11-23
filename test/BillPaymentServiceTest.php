@@ -4,13 +4,10 @@ namespace Operation;
 require_once __DIR__.'./../src/serviceauthentication/DBConnection.php';
 require_once __DIR__.'./../src/serviceauthentication/serviceauthentication.php';
 require_once __DIR__.'./../src/serviceauthentication/DBConnectionStub.php';
-require_once __DIR__.'./../src/serviceauthentication/ServiceAuthenticationStub.php';
+require_once __DIR__.'./../src/serviceauthentication/ServiceAuthenticationBillPaymentStub.php';
 require_once __DIR__.'./../src/billpayment/billpayment.php';
+
 use PHPUnit\Framework\TestCase;
-use Operation\ServiceAuthenticationStub;
-use Operation\serviceAuthentication;
-use Operation\DBConnectionStub;
-use Operation\DBConnection;
 use Operation\BillPayment;
 
 class BillPaymentTest extends TestCase {

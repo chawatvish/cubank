@@ -2,13 +2,13 @@
 namespace Operation;
 
 require_once __DIR__ . './../serviceauthentication/serviceauthentication.php';
-require_once __DIR__ . './../serviceauthentication/ServiceAuthenticationStub.php';
+require_once __DIR__ . './../serviceauthentication/ServiceAuthenticationBillPaymentStub.php';
 require_once __DIR__ . './../serviceauthentication/DBConnectionStub.php';
 
 use DBConnection;
 use Exception;
 use Operation\DBConnectionStub;
-use Operation\ServiceAuthenticationStub;
+use Operation\ServiceAuthenticationBillPaymentStub;
 use ServiceAuthentication;
 
 class BillPayment
@@ -41,7 +41,7 @@ class BillPayment
             if ($this->ServiceStub) {
                 $result = ServiceAuthentication::accountAuthenticationProvider($this->session);
             } else {
-                $result = ServiceAuthenticationStub::accountAuthenticationProvider($this->session);
+                $result = ServiceAuthenticationBillPaymentStub::accountAuthenticationProvider($this->session);
             }
             //$result = ServiceAuthentication::accountAuthenticationProvider($this->session);
             $response["accNo"] = $result["accNo"];
@@ -90,7 +90,7 @@ class BillPayment
         if ($this->ServiceStub) {
             $result = ServiceAuthentication::accountAuthenticationProvider($this->session);
         } else {
-            $result = ServiceAuthenticationStub::accountAuthenticationProvider($this->session);
+            $result = ServiceAuthenticationBillPaymentStub::accountAuthenticationProvider($this->session);
         }
         $response["accNo"] = $result["accNo"];
         $response["accName"] = $result["accName"];
