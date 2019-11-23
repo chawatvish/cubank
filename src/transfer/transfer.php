@@ -44,6 +44,12 @@ class Transfer
             $response["message"] = "หมายเลขบัญชีไม่ถูกต้อง";
             return $response;
         }
+
+        if (!is_int($amount) && $amount < 0) {
+            $response["message"] = "จำนวนเงินไม่ถูกต้อง";
+            return $response;
+        }
+
         try {
             $result = $this->service::accountAuthenticationProvider($srcNumber);
             $srcBal = $result["accBalance"];
