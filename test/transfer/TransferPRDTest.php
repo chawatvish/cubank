@@ -13,35 +13,89 @@ class TransferPRDTest extends TestCase
         $this->transferService = new Transfer();
     }
 
+    protected function _after() {
+        $this->transferService = null;
+    }
+
     public function testTC001()
     {   
         $this->_before();
-        $result = $this->transferService->doTransfer('9999999999','333333300g', '500');
+        $result = $this->transferService->doTransfer('999990000A','9999900002', '10');
         $this->assertTrue($result['isError']);
-        $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
+        $this->assertEquals("Source number isn't correct", $result["message"]);
+        $this->_after();
     }
 
     public function testTC002()
     {
         $this->_before();
-        $result = $this->transferService->doTransfer('9999999999', '123456789', '5000');
+        $result = $this->transferService->doTransfer('99999', '9999900002', '10');
         $this->assertTrue($result['isError']);
-        $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
+        $this->assertEquals("Source number isn't correct", $result["message"]);
+        $this->_after();
     }
 
     public function testTC003()
     {
         $this->_before();
-        $result = $this->transferService->doTransfer('9999999999', '123456789', '5000');
+        $srcNumber = '1234567890';
+        $result = $this->transferService->doTransfer($srcNumber, '9999900002', '10');
         $this->assertTrue($result['isError']);
-        $this->assertEquals("หมายเลขบัญชีไม่ถูกต้อง", $result["message"]);
+        $this->assertEquals("Account number : {$srcNumber} not found.", $result["message"]);
+        $this->_after();
     }
     
     public function testTC004()
     {
         $this->_before();
-        $result = $this->transferService->doTransfer('9999999999','9999900001', '500000000');
+        $result = $this->transferService->doTransfer('9999900001','999990000B', '10');
         $this->assertTrue($result['isError']);
-        $this->assertEquals("ยอดเงินไม่เพียงพอ", $result["message"]);
+        $this->assertEquals("Destination number isn't correct", $result["message"]);
+        $this->_after();
+    }
+
+    public function testTC005()
+    {
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999900001','99999', '10');
+        $this->assertTrue($result['isError']);
+        $this->assertEquals("Destination number isn't correct", $result["message"]);
+        $this->_after();
+    }
+
+    public function testTC006()
+    {
+        $this->_before();
+        $destNumber = '1234567890';
+        $result = $this->transferService->doTransfer('9999900001',$destNumber, '10');
+        $this->assertTrue($result['isError']);
+        $this->assertEquals("Account number : {$destNumber} not found.", $result["message"]);
+        $this->_after();
+    }
+
+    public function testTC007()
+    {
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999900001','9999900002', 'ABC');
+        $this->assertTrue($result['isError']);
+        $this->assertEquals("Transfer amount isn't correct", $result["message"]);
+        $this->_after();
+    }
+
+    public function testTC008()
+    {
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999900001','9999900002', '-10');
+        $this->assertTrue($result['isError']);
+        $this->assertEquals("Transfer amount isn't correct", $result["message"]);
+        $this->_after();
+    }
+
+    public function testTC009()
+    {
+        $this->_before();
+        $result = $this->transferService->doTransfer('9999900001','9999900002', '10');
+        $this->assertFalse($result['isError']);
+        $this->_after();
     }
 }
