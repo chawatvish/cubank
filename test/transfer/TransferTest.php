@@ -33,6 +33,30 @@ class TransferTest extends TestCase
         $this->transferService = null;
     }
 
+    public function testCallingServiceAuthenStub_Show_Called() {
+        $this->_before();
+        $stubMsg = $this->stubServiceAuthen::callStub();
+        $this->assertEquals("Hi I'm Authen Stub.", $stubMsg);
+    }
+
+    public function testCallingDatabaseStub_Show_Called() {
+        $this->_before();
+        $stubMsg = $this->stubDB::callStub();
+        $this->assertEquals("Hi I'm Database Stub.", $stubMsg);
+    }
+
+    public function testCallingWithdrawalStub_Show_Called() {
+        $this->_before();
+        $stubMsg = $this->stubWithdrawal::callStub();
+        $this->assertEquals("Hi I'm Withdrawal Stub.", $stubMsg);
+    }
+
+    public function testCallingDepositStub_Show_Called() {
+        $this->_before();
+        $stubMsg = $this->stubDeposit::callStub();
+        $this->assertEquals("Hi I'm Deposit Stub.", $stubMsg);
+    }
+
     public function testTC001()
     {   
         $this->_before();

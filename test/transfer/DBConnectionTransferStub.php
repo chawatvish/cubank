@@ -4,6 +4,11 @@ use AccountInformationException;
 use DBConnection;
 
 class DBConnectionTransferStub extends DBConnection {
+
+    public static function callStub(): String {
+        return "Hi I'm Database Stub.";
+    }
+
     public static function saveTransaction(string $accNo, int $updatedBalance): bool {
         return true;
     }

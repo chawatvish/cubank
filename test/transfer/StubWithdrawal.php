@@ -4,6 +4,10 @@ use Operation\Withdrawal;
 
 class StubWithdrawal extends Withdrawal
 {
+    public static function callStub(): String {
+        return "Hi I'm Withdrawal Stub.";
+    }
+
     public function withdraw($accNo, $amount): array
     {
         if ($accNo == '9999900001') {

@@ -4,6 +4,11 @@ use Operation\DepositService;
 
 class StubDeposit extends DepositService
 {
+
+    public static function callStub(): String {
+        return "Hi I'm Deposit Stub.";
+    }
+
     public function deposit($accNo, $amount): array
     {
         if ($accNo == '9999900002') {
