@@ -1,5 +1,6 @@
 <?php namespace Operation;
 
+use AccountInformationException;
 use DBConnection;
 
 class DBConnectionTransferStub extends DBConnection {
@@ -9,12 +10,12 @@ class DBConnectionTransferStub extends DBConnection {
 
     public static function getAccountInfo(string $accNo): array {
 
-        if ($accNo !== '9999999999') {
-			throw new AccountInformationException("Account number : {$accNo} not found.");
+        if ($accNo != '9999900001' && $accNo != '9999900002') {
+            throw new AccountInformationException("Account number : {$accNo} not found.");
         }
-        
+
         $data = array(
-            'accNo' => '9999999999', 
+            'accNo' => $accNo, 
             'accName' => 'Test Stub Dep 01', 
             'accBalance' => 1000000,
             'accWaterCharge' => 543,

@@ -40,43 +40,55 @@ class Transfer
     {
         $response = array("isError" => true);
         $srcBal = 0;
-        if (strlen($targetNumber) != 10 || !is_numeric($targetNumber)) {
-            $response["message"] = "หมายเลขบัญชีไม่ถูกต้อง";
+
+        if (strlen($srcNumber) != 10 || !is_numeric($srcNumber)) {
+            $response["message"] = "Source number isn't correct";
             return $response;
         }
 
-        if (!is_int($amount) && $amount < 0) {
-            $response["message"] = "จำนวนเงินไม่ถูกต้อง";
+        if (strlen($targetNumber) != 10 || !is_numeric($targetNumber)) {
+            $response["message"] = "Destination number isn't correct";
+            return $response;
+        }
+
+        if (!is_numeric($amount) || $amount < 0) {
+            $response["message"] = "Transfer amount isn't correct";
             return $response;
         }
 
         try {
+            $result = $this->service::accountAuthenticationProvider($targetNumber);
             $result = $this->service::accountAuthenticationProvider($srcNumber);
+
+            $srcName = $result["accName"];
             $srcBal = $result["accBalance"];
             if ($srcBal < $amount) {
                 $response["message"] = "ยอดเงินไม่เพียงพอ";
                 return $response;
             }
-
             $withdrawalResult = $this->withdrawalService->withdraw($srcNumber, $amount);
-            if ($withdrawalResult["isError"] == true) {
+            $isWithdrawalError = isset($withdrawalResult["isError"])  ? $withdrawalResult["isError"] : false;
+            if ($isWithdrawalError) {
                 $response["message"] = $withdrawalResult["message"];
                 return $response;
             }
+
             $depositResult = $this->depositService->deposit($targetNumber ,$amount);
-            if ($depositResult["isError"] == true) {
+            $isDepositError = isset($depositResult["isError"])  ? $depositResult["isError"] : false;
+            if ($isDepositError) {
                 $response["message"] = $depositResult["message"];
                 return $response;
             }
 
             $srcBalAfter = $srcBal - $amount;
-            $response["accNo"] = $this->srcNumber;
-            $response["accName"] = $this->srcName;
+            $response["accNo"] = $srcNumber;
+            $response["accName"] = $srcName;
             $response["accBalance"] = $srcBalAfter;
             $response["isError"] = false;
         } catch (Exception $e) {
             $response["message"] = $e->getMessage();
         }
+        
         return $response;
     }
 }
